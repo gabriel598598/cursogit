@@ -1,0 +1,182 @@
+<form string="Acción de servidor" modifiers="{}">
+	<header modifiers="{}">
+		<field name="binding_model_id" invisible="1" on_change="1" can_create="true" can_write="true" modifiers="{'invisible':true}" id="binding_model_id"/>
+		<button name="method_direct_trigger" type="object" string="Ejecutar Manualmente" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'code')]}" modifiers="{'invisible':[['state','!=','code']]}" options="{}"/>
+	</header>
+	<sheet modifiers="{}">
+		<div class="oe_title" modifiers="{}">
+			<label for="name" class="oe_edit_only" modifiers="{}"/>
+			<h1 modifiers="{}">
+				<field name="name" placeholder="Por ejemplo, Actualizar la cantidad de pedido" on_change="1" modifiers="{'required':true}" id="name"/>
+			</h1>
+		</div>
+		<group name="action_wrapper" modifiers="{}">
+			<group name="action_content" modifiers="{}">
+				<field name="model_id" options="{'no_create': True}" on_change="1" can_create="true" can_write="true" modifiers="{'required':true}" id="model_id"/>
+				<field name="model_name" invisible="1" on_change="1" modifiers="{'invisible':true,'readonly':true}" id="model_name"/>
+				<field name="user_id" can_create="true" can_write="true" modifiers="{'required':true}" id="user_id"/>
+				<label for="interval_number" string="Ejecutar cada" modifiers="{}"/>
+				<div modifiers="{}">
+					<field name="interval_number" class="oe_inline" modifiers="{}" id="interval_number"/>
+					<field name="interval_type" class="oe_inline" modifiers="{}" id="interval_type"/>
+				</div>
+				<field name="active" widget="boolean_toggle" modifiers="{}" id="active"/>
+				<field name="nextcall" modifiers="{'required':true}" id="nextcall"/>
+				<field name="numbercall" modifiers="{}" id="numbercall"/>
+				<field name="priority" modifiers="{}" id="priority"/>
+				<field name="doall" modifiers="{}" id="doall"/>
+			</group>
+			<group modifiers="{}">
+				<field name="state" invisible="1" on_change="1" modifiers="{'invisible':true,'required':true}" id="state"/>
+				<field name="website_published" attrs="{'invisible': [('state', '!=', 'code')]}" on_change="1" modifiers="{'invisible':[['state','!=','code']]}" id="website_published"/>
+				<field name="xml_id" invisible="1" on_change="1" modifiers="{'invisible':true,'readonly':true}" id="xml_id"/>
+				<field name="website_path" attrs="{'invisible': ['|', ('website_published', '!=', True), ('state', '!=', 'code')]}" on_change="1" modifiers="{'invisible':['|',['website_published','!=',true],['state','!=','code']]}" id="website_path"/>
+				<field name="website_url" readonly="1" widget="url" attrs="{'invisible': ['|', ('website_published', '!=', True), ('state', '!=', 'code')]}" on_change="1" modifiers="{'invisible':['|',['website_published','!=',true],['state','!=','code']],'readonly':true}" id="website_url"/>
+				<field name="type" invisible="1" on_change="1" modifiers="{'invisible':true,'required':true}" id="type"/>
+				<field name="crud_model_id" options="{'no_create': True}" attrs="{'invisible': [('state', '!=', 'object_create')], 'required': [('state', '=', 'object_create')]}" on_change="1" can_create="true" can_write="true" modifiers="{'invisible':[['state','!=','object_create']],'required':[['state','=','object_create']]}" id="crud_model_id"/>
+				<field name="crud_model_name" invisible="1" on_change="1" modifiers="{'invisible':true,'readonly':true}" id="crud_model_name"/>
+				<field name="link_field_id" domain="[('model_id', '=', model_id), ('relation', '=', crud_model_name),                                     ('ttype', 'in', ['many2one', 'one2many', 'many2many'])]" attrs="{'invisible': [('state', '!=', 'object_create')]}" context="{'default_model_id': model_id, 'default_relation': crud_model_name}" on_change="1" can_create="true" can_write="true" modifiers="{'invisible':[['state','!=','object_create']]}" id="link_field_id"/>
+				<field name="sms_template_id" context="{'default_model_id': model_id}" attrs="{'invisible': [('state', '!=', 'sms')],                             'required': [('state', '=', 'sms')]}" on_change="1" can_create="true" can_write="true" modifiers="{'invisible':[['state','!=','sms']],'required':[['state','=','sms']]}" id="sms_template_id"/>
+				<field name="sms_mass_keep_log" attrs="{'invisible': [('state', '!=', 'sms')]}" on_change="1" modifiers="{'invisible':[['state','!=','sms']]}" id="sms_mass_keep_log"/>
+				<field name="partner_ids" widget="many2many_tags" attrs="{'invisible': [('state', '!=', 'followers')]}" on_change="1" can_create="true" can_write="true" modifiers="{'invisible':[['state','!=','followers']]}" id="partner_ids"/>
+				<field name="channel_ids" widget="many2many_tags" attrs="{'invisible': [('state', '!=', 'followers')]}" on_change="1" can_create="true" can_write="true" modifiers="{'invisible':[['state','!=','followers']]}" id="channel_ids"/>
+				<field name="template_id" attrs="{'invisible': [('state', '!=', 'email')],                                 'required': [('state', '=', 'email')]}" on_change="1" can_create="true" can_write="true" modifiers="{'invisible':[['state','!=','email']],'required':[['state','=','email']]}" id="template_id"/>
+			</group>
+		</group>
+		<notebook modifiers="{}">
+			<page string="Código Python" name="code" autofocus="autofocus" attrs="{'invisible': [('state', '!=', 'code')]}" modifiers="{'invisible':[['state','!=','code']]}">
+				<field name="code" widget="ace" options="{'mode': 'python'}" placeholder="Introduzca código Python aquí. Ayuda disponible sobre expresiones Python en la pestaña de ayuda de este documento." on_change="1" modifiers="{}" id="code"/>
+			</page>
+			<page string="Datos por escribir" name="page_object" autofocus="autofocus" attrs="{'invisible':[('state', 'not in', ['object_create', 'object_write'])]}" modifiers="{'invisible':[['state','not in',['object_create','object_write']]]}">
+				<p attrs="{'invisible': [('model_id', '!=', False)]}" modifiers="{'invisible':[['model_id','!=',false]]}">
+					
+                                    Configure el modelo que va a crear antes de seleccionar los valores
+                                
+				</p>
+				<field name="fields_lines" on_change="1" modifiers="{}" id="fields_lines"/>
+			</page>
+			<page string="Actividad" name="next_activity" autofocus="autofocus" attrs="{'invisible': [('state', '!=', 'next_activity')]}" modifiers="{'invisible':[['state','!=','next_activity']]}">
+				<group modifiers="{}">
+					<group modifiers="{}">
+						<field name="activity_type_id" options="{'no_create': True, 'no_open': True}" attrs="{'required': [('state', '=', 'next_activity')]}" on_change="1" can_create="true" can_write="true" modifiers="{'required':[['state','=','next_activity']]}" id="activity_type_id"/>
+						<field name="activity_summary" placeholder="Por ejemplo, discutir propuesta" on_change="1" modifiers="{}" id="activity_summary"/>
+					</group>
+					<group modifiers="{}">
+						<label for="activity_date_deadline_range" modifiers="{}"/>
+						<div class="o_row" modifiers="{}">
+							<field name="activity_date_deadline_range" on_change="1" modifiers="{}" id="activity_date_deadline_range"/>
+							<field name="activity_date_deadline_range_type" attrs="{                                         'required': [('state', '=', 'next_activity'), ('activity_date_deadline_range', '&gt;', 0)]                                     }" on_change="1" modifiers="{'required':[['state','=','next_activity'],['activity_date_deadline_range','&gt;',0]]}" id="activity_date_deadline_range_type"/>
+						</div>
+						<field name="activity_user_type" on_change="1" modifiers="{'required':true}" id="activity_user_type"/>
+						<field name="activity_user_field_name" attrs="{                                     'invisible': [('activity_user_type', '=', 'specific')],                                     'required': [('state', '=', 'next_activity'), ('activity_user_type', '=', 'generic')]                                 }" on_change="1" modifiers="{'invisible':[['activity_user_type','=','specific']],'required':[['state','=','next_activity'],['activity_user_type','=','generic']]}" id="activity_user_field_name"/>
+						<field name="activity_user_id" attrs="{                                     'invisible': [('activity_user_type', '=', 'generic')],                                     'required': [('state', '=', 'next_activity'), ('activity_user_type', '=', 'specific')]                                 }" on_change="1" can_create="true" can_write="true" modifiers="{'invisible':[['activity_user_type','=','generic']],'required':[['state','=','next_activity'],['activity_user_type','=','specific']]}" id="activity_user_id"/>
+					</group>
+				</group>
+				<field name="activity_note" placeholder="Registrar una nota..." on_change="1" modifiers="{}" id="activity_note"/>
+			</page>
+			<page name="security" string="Seguridad" modifiers="{}">
+				<field name="groups_id" on_change="1" can_create="true" can_write="true" modifiers="{}" id="groups_id"/>
+			</page>
+			<page string="Acciones" name="actions" autofocus="autofocus" attrs="{'invisible': [('state', '!=', 'multi')]}" modifiers="{'invisible':[['state','!=','multi']]}">
+				<p class="oe_grey" modifiers="{}">
+					
+                                    Si varias acciones hijas devuelven a su vez una acción, sólo se ejecutará la última.
+Esto puede ocurrir cuando se tengan acciones de servidor ejecutando código que devuelve una acción, o varias acciones de servidor devolviendo una acción de cliente.
+                                
+				</p>
+				<field name="child_ids" domain="[('model_id', '=', model_id)]" on_change="1" can_create="true" can_write="true" modifiers="{}" id="child_ids"/>
+			</page>
+			<page string="Ayuda" name="help_info" autofocus="autofocus" attrs="{'invisible': [('state', '!=', 'code')]}" modifiers="{'invisible':[['state','!=','code']]}">
+				<group modifiers="{}">
+					<div style="margin-top: 4px;" modifiers="{}">
+						<h3 modifiers="{}">
+							Ayuda con expresiones Python
+						</h3>
+						<p modifiers="{}">
+							Varios campos pueden usar código Python o expresiones Python. Se pueden usar las siguientes variables:
+						</p>
+						<ul modifiers="{}">
+							<li modifiers="{}">
+								<code modifiers="{}">
+									env
+								</code>
+								: Ambiente de Odoo en el que se realiza la acción
+							</li>
+							<li modifiers="{}">
+								<code modifiers="{}">
+									model
+								</code>
+								: Modelo de Odoo del registro en el que la acción es realizada; es un conjunto de registros vacíos
+							</li>
+							<li modifiers="{}">
+								<code modifiers="{}">
+									record
+								</code>
+								: registro en el que la acción es realizada; puede estar vacía
+							</li>
+							<li modifiers="{}">
+								<code modifiers="{}">
+									records
+								</code>
+								: conjunto de todos los registros en lo cuales la acción fue realizada en modo múltiple; puede estar vacía
+							</li>
+							<li modifiers="{}">
+								<code modifiers="{}">
+									time
+								</code>
+								, 
+								<code modifiers="{}">
+									datetime
+								</code>
+								, 
+								<code modifiers="{}">
+									dateutil
+								</code>
+								, 
+								<code modifiers="{}">
+									timezone
+								</code>
+								: useful Python libraries
+							</li>
+							<li modifiers="{}">
+								<code modifiers="{}">
+									log(message, level='info')
+								</code>
+								:función de logeo para registrar información de debugeo en la tabla
+								<code modifiers="{}">
+									ir.logging
+								</code>
+							</li>
+							<li modifiers="{}">
+								<code modifiers="{}">
+									UserError
+								</code>
+								 : Excepción de advertencia para usar con 
+								<code modifiers="{}">
+									raise
+								</code>
+							</li>
+							<li modifiers="{}">
+								Para devolver una acción, asigne: 
+								<code modifiers="{}">
+									action = {...}
+								</code>
+							</li>
+						</ul>
+						<div attrs="{'invisible': [('state', '!=', 'code')]}" modifiers="{'invisible':[['state','!=','code']]}">
+							<p modifiers="{}">
+								Ejemplo de código Python
+							</p>
+							<code style="white-space: pre-wrap" modifiers="{}">
+								
+partner_name = record.name + '_code'
+env['res.partner'].create({'name': partner_name})
+
+							</code>
+						</div>
+					</div>
+				</group>
+			</page>
+		</notebook>
+	</sheet>
+</form>
